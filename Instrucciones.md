@@ -42,9 +42,13 @@ Con estos cuatro resultados, ajusta un **modelo lineal (de primer orden)**:
 y = b0 + b1·x1 + b2·x2
 ```
 
-**Recomendación:** agrega 2 o 3 réplicas en el punto central (x1=0, x2=0
-codificado) antes de continuar. Te sirven para estimar el error puro y
-detectar si hay curvatura importante — si la hay, es una señal de que ya
+**Recomendación:** agrega una corrida en el punto central (x1=0, x2=0
+codificado) antes de continuar. Con una misma semilla, el proceso es
+determinista: repetir exactamente la misma combinación de x1, x2 y semilla
+siempre da el mismo y, así que no ganas nada replicando el centro varias
+veces. Lo que sí debes hacer es comparar el y observado en el centro contra
+el y que predice tu modelo lineal en ese mismo punto (el intercepto, b0):
+si la diferencia es importante, es una señal de curvatura — de que ya
 estás cerca de la región óptima y el modelo lineal no será suficiente.
 
 ---
