@@ -6,9 +6,14 @@ Metodología de Superficie de Respuesta (RSM). No sigas los pasos de forma
 mecánica: en cada fase debes analizar tus datos antes de decidir el
 siguiente movimiento, igual que en un experimento real.
 
-Recuerda: toda tu campaña experimental (todas las fases) debe usar **la
-misma semilla** (`--semilla`) para que las diferencias entre corridas se
-deban solo a x1 y x2.
+Recuerda: toda tu campaña experimental debe usar **la misma semilla de
+diseño** (`--semilla`, por defecto 42) en los puntos del diseño, para que
+las diferencias entre corridas se deban solo a x1 y x2. La única excepción
+es cuando repites a propósito el mismo punto (por ejemplo, el punto
+central) para estimar el error puro: ahí debes usar **semillas distintas
+entre sí** (por ejemplo, 42, 43, 44, ...), porque con la misma semilla el
+proceso es determinista y repetir exactamente la misma corrida no te da
+información nueva.
 
 ---
 
@@ -42,14 +47,20 @@ Con estos cuatro resultados, ajusta un **modelo lineal (de primer orden)**:
 y = b0 + b1·x1 + b2·x2
 ```
 
-**Recomendación:** agrega una corrida en el punto central (x1=0, x2=0
-codificado) antes de continuar. Con una misma semilla, el proceso es
-determinista: repetir exactamente la misma combinación de x1, x2 y semilla
-siempre da el mismo y, así que no ganas nada replicando el centro varias
-veces. Lo que sí debes hacer es comparar el y observado en el centro contra
-el y que predice tu modelo lineal en ese mismo punto (el intercepto, b0):
-si la diferencia es importante, es una señal de curvatura — de que ya
-estás cerca de la región óptima y el modelo lineal no será suficiente.
+**Recomendación:** agrega 3 réplicas en el punto central (x1=0, x2=0
+codificado), cada una con una semilla distinta (por ejemplo, 42, 43 y 44),
+mientras que los 4 puntos factoriales se ejecutan con tu semilla de diseño
+única. Con esas réplicas puedes:
+
+- Estimar el **error puro** (la variabilidad entre las 3 corridas del
+  centro, que solo difieren en la semilla).
+- Hacer una comparación de curvatura: el promedio de las 4 corridas
+  factoriales contra el promedio de las réplicas del centro, usando el
+  error puro para juzgar si la diferencia observada es grande frente a la
+  variabilidad natural del proceso.
+
+Si la curvatura es importante, es una señal de que ya estás cerca de la
+región óptima y el modelo lineal no será suficiente.
 
 ---
 
@@ -81,8 +92,11 @@ réplicas del punto central), siempre dentro de los rangos válidos:
 - x1 ∈ [0.01, 0.30]
 - x2 ∈ [2, 10]
 
-Ejecuta todas las corridas de este diseño con la misma semilla que has
-usado en todo el proyecto.
+Ejecuta los puntos factoriales y axiales con tu semilla de diseño. Para las
+réplicas del punto central, usa de nuevo varias semillas distintas (por
+ejemplo, 42, 43, 44) en lugar de repetir la misma — así obtienes una nueva
+estimación del error puro con la que evaluar la falta de ajuste (lack of
+fit) de tu modelo de segundo orden.
 
 ---
 
@@ -119,8 +133,9 @@ contra la predicha por tu modelo de segundo orden.
 Tu análisis debe basarse en el archivo `resultados.csv` acumulado durante
 todas las fases, y debe incluir como mínimo:
 
-- El modelo de primer orden y la decisión tomada a partir de él.
+- El modelo de primer orden, el chequeo de curvatura con el error puro de
+  las réplicas del centro, y la decisión tomada a partir de él.
 - Las corridas del camino de máximo ascenso y su justificación.
-- El diseño y modelo de segundo orden.
+- El diseño y modelo de segundo orden, con su análisis de falta de ajuste.
 - El análisis canónico y el punto óptimo identificado.
 - La corrida (o corridas) de confirmación del óptimo.
