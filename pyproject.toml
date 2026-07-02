@@ -1,0 +1,25 @@
+[project]
+name = "doe-rsm-experiment"
+version = "0.1.0"
+description = "Proceso experimental simulado para un ejercicio de RSM en un curso de DOE"
+readme = "README.md"
+authors = [
+    { name = "delany-ramirez", email = "delram@utp.edu.co" }
+]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "scikit-learn>=1.4",
+    "pandas>=2.0",
+    "numpy>=1.26",
+    "click>=8.1",
+]
+
+[project.scripts]
+corrida = "experiment.cli:main"
+
+[tool.uv.build-backend]
+module-name = "experiment"
+
+[build-system]
+requires = ["uv_build>=0.10.8,<0.11.0"]
+build-backend = "uv_build"
